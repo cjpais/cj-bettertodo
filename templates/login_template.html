@@ -9,35 +9,30 @@
   <meta name="author" content="Christopher Pais">
   <link rel="icon" href="../../favicon.ico">
   <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/bootstrap.min.css')}}">
-
+  <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/signin.css')}}">
 
   <title>Login to BetterTodo</title>
 
 </head>
 
 <body>
-
   <div class="container">
 
-      <form>
-        <h2>Please sign in</h2>
-        <div class="mdl-card mdl-shadow-2dp">
-        <label for="inputEmail">Email address</label>
-        <input type="email" id="inputEmail" placeholder="Email address" required autofocus>
-        <label for="inputPassword">Password</label>
-        <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
-        <div class="checkbox">
-          <label>
-            <input type="checkbox" value="remember-me"> Remember me
-          </label>
-        </div>
-        <button type="submit">Sign in</button>
-            </div>
-      </form>
+    <form class="form-signin">
+      <h2 class="form-signin-heading">Please sign in</h2>
+      <label for="inputEmail" class="sr-only">Email address</label>
+      <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+      <label for="inputPassword" class="sr-only">Password</label>
+      <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" value="remember-me"> Remember me
+        </label>
+      </div>
+      <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+      <button class="btn btn-lg btn-success btn-block" type="submit">Register</button>
+    </form>
 
-  </div>
-
-
-
+  </div> <!-- /container -->
 </body>
 </html>
