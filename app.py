@@ -16,6 +16,7 @@ class User(db.Model):
     password = db.Column('password', db.String(30))
     created = db.Column('created', db.DateTime)
     authenticated = db.Column(db.Boolean, default=False)
+    todos = db.relationship('Todo', backref='todos', lazy='dynamic')
 
     def __init__(self, username, email, password):
 		self.username = username
@@ -29,21 +30,35 @@ class User(db.Model):
 	def __repr__(self):
 		return '<User %r>' % self.username
 
+class Todo(db.Model):
+    __tablename__ = 'todos'
+    id = db.Column('todo_id', db.Integer, primary_key = True, unique = True)
+    user_id = db.Column('user_id', db.Integer, db.ForeignKey('user.user_id'))
+    title = db.Column('todo_title', db.String(140))
+    content = db.Column('todo_content', db.String(1000))
+    column = db.Column('todo_column', db.Integer)
+    created = db.Column('todo_created', db.DateTime)
+    finished = db.Column('todo_finished', db.Boolean, default = False)
+    finishedTime = db.Column('todo_fin_time', db.DateTime)
+
+    def __init__(self, user_id, content, column, title = None):
+        self.user_id = user_id
+        self.content = content
+        self.column = column
+        self.title = title
+        self.created = datetime.utcnow()
+
 @app.route('/')
 def index():
-    db.create_all()
-    print "redirected"
-    print session
     if not session.get('logged_in'):
         return render_template('login_template.html')
     else:
-        return "meantime before index homepage thing"
+        user = User.query.filter_by(id = session['userid']).first()
+        todolist = user.todos.all()
+        return render_template('home_template.html', todos = todolist)
 
 @app.route('/login/', methods=['POST', 'GET'])
 def login():
-    print request.method
-    #Session = sessionmaker(bind=app.config["SQLALCHEMY_DATABASE_URI"])
-    #s = Session()
     if request.method == 'POST':
         inputUser = str(request.form['inputUsername'])
         inputPass = str(request.form['inputPassword'])
@@ -51,6 +66,10 @@ def login():
         valid = result and result.check_password(inputPass)
         if valid:
             session['logged_in'] = True
+            session['userid'] = result.id
+            #testnewthing = Todo(result.id, "Test content", 2, title = "TEST")
+            #db.session.add(testnewthing)
+            #db.session.commit()
             return redirect(url_for('index'))
         else:
             flash("WRONG PASSWORD")
@@ -73,8 +92,9 @@ def register():
 @app.route('/logout/')
 def logout():
     session['logged_in'] = False
-    return home()
+    return index()
 
 if __name__ == '__main__':
     app.secret_key = os.urandom(80)
+    db.create_all()
     app.run(debug=True, port=8080)
