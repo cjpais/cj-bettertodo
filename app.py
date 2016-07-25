@@ -45,17 +45,39 @@ class Todo(db.Model):
         self.user_id = user_id
         self.content = content
         self.column = column
-        self.title = title
+        if title != None:
+            self.title = title
         self.created = datetime.utcnow()
 
-@app.route('/')
+@app.route('/', methods=['POST', 'GET'])
 def index():
-    if not session.get('logged_in'):
-        return render_template('login_template.html')
+    todolist = []
+    columnDict = {"current": 1, "week": 2, "backlog": 3}
+    if request.method == "POST":
+        data = request.json[0]
+        column = columnDict.get(request.json[1])
+        change_columns(data, column)
     else:
-        user = User.query.filter_by(id = session['userid']).first()
-        todolist = user.todos.all()
-        return render_template('home_template.html', todos = todolist)
+        if not session.get('logged_in'):
+            return render_template('login_template.html')
+        else:
+            user = User.query.filter_by(id = session['userid']).first()
+            todolist = user.todos.all()
+            print todolist[2].content
+    return render_template('home_template.html', todos = todolist)
+
+@app.route('/new/', methods=['POST'])
+def new():
+    header = request.form['header']
+    content = request.form['content'].strip().rstrip()
+    column = int(request.form['column'])
+    if header == None:
+        newTodo = Todo(session['userid'], content, column)
+    else:
+        newTodo = Todo(session['userid'], content, column, title = header)
+    db.session.add(newTodo)
+    db.session.commit()
+    return redirect(url_for('index'))
 
 @app.route('/login/', methods=['POST', 'GET'])
 def login():
@@ -67,7 +89,7 @@ def login():
         if valid:
             session['logged_in'] = True
             session['userid'] = result.id
-            #testnewthing = Todo(result.id, "Test content", 2, title = "TEST")
+            #testnewthing = Todo(result.id, "Test content", 1, title = "TEST")
             #db.session.add(testnewthing)
             #db.session.commit()
             return redirect(url_for('index'))
@@ -93,6 +115,15 @@ def register():
 def logout():
     session['logged_in'] = False
     return index()
+
+def change_columns(data, column):
+    """ Given an array of the moved todos, place them in the database with the
+        correct columns.
+    """
+    for todo in data:
+        todoChange = Todo.query.filter_by(id=todo).first()
+        todoChange.column = column
+    db.session.commit()
 
 if __name__ == '__main__':
     app.secret_key = os.urandom(80)

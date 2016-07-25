@@ -8,6 +8,7 @@
   <meta name="description" content="Nothing better than a life with good TODO">
   <meta name="author" content="Christopher Pais">
   <link rel="icon" href="../../favicon.ico">
+  <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/material.min.css')}}">
   <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/bootstrap.min.css')}}">
   <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/signin.css')}}">
   <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/list.css')}}">
@@ -36,9 +37,27 @@
     </div><!--/.nav-collapse -->
   </div>
 </nav>
-
+<!-- Colored FAB button -->
 <div class="container">
   <br>
+  <span></span>
+  <!-- FAB button with ripple -->
+  <a class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored" id="opener" href="#">
+    <i class="material-icons">+</i>
+  </a>
+
+  <div id="newTodo">
+    <form action="{{url_for('new')}}" method="post">
+      <input type="text" name="header" class="form-control" placeholder="Header"></input>
+      <textarea name="content" class="form-control" rows="6" placeholder="content"></textarea>
+      <select name="column" class="form-control">
+        <option value="1">Current</option>
+        <option value="2">Week</option>
+        <option value="3">Backlog</option>
+      </select>
+      <button type="submit" class="btn btn-success pull-right">Create</button>
+    </form>
+  </div>
 
   <div class="row">
     <div class="col-xs-6 col-sm-4">
@@ -47,11 +66,11 @@
         {% for todo in todos %}
         {% if todo.column == 1 and todo.finished == False %}
 
-        <div class="panel panel-default">
+        <div id="{{todo.id}}" class="panel panel-default">
           <div class="panel-heading">
             <h3 class="panel-title">{{ todo.title }}</h3>
           </div>
-          <div class="panel-body">{{ todo.content }}</div>
+          <div class="panel-body">{{todo.content.strip().rstrip()}}</div>
         </div>
 
         {% endif %}
@@ -65,7 +84,7 @@
         {% for todo in todos %}
         {% if todo.column == 2 and todo.finished == False %}
 
-        <div class="panel panel-default">
+        <div id="{{todo.id}}" class="panel panel-default">
           <div class="panel-heading">
             <h3 class="panel-title">{{ todo.title }}</h3>
           </div>
@@ -83,7 +102,7 @@
         {% for todo in todos %}
         {% if todo.column == 3 and todo.finished == False %}
 
-        <div class="panel panel-default">
+        <div id="{{todo.id}}" class="panel panel-default">
           <div class="panel-heading">
             <h3 class="panel-title">{{ todo.title }}</h3>
           </div>
@@ -104,6 +123,7 @@
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="{{url_for('static',filename='js/jquery.min.js')}}"></script>
+<script src="{{url_for('static',filename='js/material.min.js')}}"></script>
 <script src="{{url_for('static',filename='js/jquery-ui.js')}}"></script>
 <script>
 $( function() {
@@ -111,6 +131,49 @@ $( function() {
     connectWith: ".connectedSortable"
   }).disableSelection();
 } );
+</script>
+<script>
+$(document).ready(function () {
+  $("#current, #week, #backlog").sortable({
+    update: function(event, ui) {
+      var data = new Array();
+      data[0] = $(this).sortable("toArray");
+      data[1] = $(this).attr("id");
+      console.log(data)
+      $.ajax({
+        data: JSON.stringify(data, null, '\t'),
+        contentType: 'application/json;charset=UTF-8',
+        type: 'POST',
+        url: '{{url_for("index")}}'
+      });
+    }
+  });
+});
+</script>
+<script>
+var opener = document.getElementById("opener");
+
+opener.onclick = function(){
+
+    var lightbox = document.getElementById("newTodo"),
+        dimmer = document.createElement("div");
+
+    dimmer.style.width =  window.innerWidth + 'px';
+    dimmer.style.height = window.innerHeight + 'px';
+    dimmer.className = 'dimmer';
+
+    dimmer.onclick = function(){
+        document.body.removeChild(this);
+        lightbox.style.visibility = 'hidden';
+    }
+
+    document.body.appendChild(dimmer);
+
+    lightbox.style.visibility = 'visible';
+    lightbox.style.top = window.innerHeight/2 - 50 + 'px';
+    lightbox.style.left = window.innerWidth/2 - 100 + 'px';
+    return false;
+}
 </script>
 </body>
 </html>
