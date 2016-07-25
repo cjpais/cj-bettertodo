@@ -40,6 +40,7 @@ class Todo(db.Model):
     created = db.Column('todo_created', db.DateTime)
     finished = db.Column('todo_finished', db.Boolean, default = False)
     finishedTime = db.Column('todo_fin_time', db.DateTime)
+    weight = db.Column('weight', db.Integer) #TODO FINISH IMPLEMENTING THIS FOR SORTED RETREIVAL
 
     def __init__(self, user_id, content, column, title = None):
         self.user_id = user_id
@@ -63,7 +64,6 @@ def index():
         else:
             user = User.query.filter_by(id = session['userid']).first()
             todolist = user.todos.all()
-            print todolist[2].content
     return render_template('home_template.html', todos = todolist)
 
 @app.route('/new/', methods=['POST'])
@@ -114,7 +114,7 @@ def register():
 @app.route('/logout/')
 def logout():
     session['logged_in'] = False
-    return index()
+    return redirect(url_for('index'))
 
 def change_columns(data, column):
     """ Given an array of the moved todos, place them in the database with the
