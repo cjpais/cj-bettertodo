@@ -28,7 +28,9 @@
       </div>
       <div id="navbar" class="collapse navbar-collapse">
         <ul class="nav navbar-nav">
+          <li class="active"><a href="{{url_for('index')}}">Home</a></li>
           <li><a href="{{url_for('logout')}}">Logout</a></li>
+          <li><a href="{{url_for('completed')}}">Completed Tasks</a></li>
       </ul>
     </div><!--/.nav-collapse -->
   </div>
@@ -36,11 +38,6 @@
 <!-- Colored FAB button -->
 <div class="container">
   <br>
-  <span></span>
-  <!-- FAB button with ripple -->
-  <a class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored" id="opener" href="#">
-    <i class="material-icons">+</i>
-  </a>
 
   <div id="newTodo">
     <form action="{{url_for('new')}}" method="post">
@@ -110,6 +107,11 @@
       </ul>
     </div>
   </div>
+
+  <!-- FAB button with ripple -->
+  <a class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored" id="opener" href="#">
+    <i class="material-icons">+</i>
+  </a>
 
 </div>
 </div><!-- /.container -->

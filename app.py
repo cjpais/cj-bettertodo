@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
+import sys
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tmp/todo.db'
@@ -63,7 +64,7 @@ def index():
             return render_template('login_template.html')
         else:
             user = User.query.filter_by(id = session['userid']).first()
-            todolist = user.todos.all()
+            todolist = user.todos.filter_by(finished = False).order_by(Todo.weight.asc())
     return render_template('home_template.html', todos = todolist)
 
 @app.route('/new/', methods=['POST'])
@@ -74,10 +75,14 @@ def new():
     if header == None:
         newTodo = Todo(session['userid'], content, column)
     else:
-        newTodo = Todo(session['userid'], content, column, title = header)
+        newTodo = Todo(session['userid'], content, column, title = header, weight = sys.maxint)
     db.session.add(newTodo)
     db.session.commit()
     return redirect(url_for('index'))
+
+@app.route('/remove/', methods=['POST'])
+def remove():
+    print "do something"
 
 @app.route('/login/', methods=['POST', 'GET'])
 def login():
@@ -120,9 +125,10 @@ def change_columns(data, column):
     """ Given an array of the moved todos, place them in the database with the
         correct columns.
     """
-    for todo in data:
+    for weight, todo in enumerate(data):
         todoChange = Todo.query.filter_by(id=todo).first()
         todoChange.column = column
+        todoChange.weight = weight
     db.session.commit()
 
 if __name__ == '__main__':
