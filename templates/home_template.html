@@ -61,7 +61,10 @@
 
         <div id="{{todo.id}}" class="panel panel-default">
           <div class="panel-heading">
-            <h3 class="panel-title">{{ todo.title }}</h3>
+            <h3 class="panel-title">{{ todo.title }}
+              <a class="pull-right pad-left" href="{{url_for('done', todoid = todo.id)}}"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></a>
+              <a class="pull-right pad-right" href="{{url_for('edit', todoid = todo.id)}}"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+            </h3>
           </div>
           <div class="panel-body">{{todo.content.strip().rstrip()}}</div>
         </div>
@@ -79,7 +82,10 @@
 
         <div id="{{todo.id}}" class="panel panel-default">
           <div class="panel-heading">
-            <h3 class="panel-title">{{ todo.title }}</h3>
+            <h3 class="panel-title">{{ todo.title }}
+              <a class="pull-right pad-left" href="{{url_for('done', todoid = todo.id)}}"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></a>
+              <a class="pull-right pad-right" href="{{url_for('edit', todoid = todo.id)}}"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+            </h3>
           </div>
           <div class="panel-body">{{ todo.content }}</div>
         </div>
@@ -97,7 +103,10 @@
 
         <div id="{{todo.id}}" class="panel panel-default">
           <div class="panel-heading">
-            <h3 class="panel-title">{{ todo.title }}</h3>
+            <h3 class="panel-title">{{ todo.title }}
+              <a class="pull-right pad-left" href="{{url_for('done', todoid = todo.id)}}"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></a>
+              <a class="pull-right pad-right" href="{{url_for('edit', todoid = todo.id)}}"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+            </h3>
           </div>
           <div class="panel-body">{{ todo.content }}</div>
         </div>

@@ -41,15 +41,16 @@ class Todo(db.Model):
     created = db.Column('todo_created', db.DateTime)
     finished = db.Column('todo_finished', db.Boolean, default = False)
     finishedTime = db.Column('todo_fin_time', db.DateTime)
-    weight = db.Column('weight', db.Integer) #TODO FINISH IMPLEMENTING THIS FOR SORTED RETREIVAL
+    weight = db.Column('weight', db.Integer)
 
-    def __init__(self, user_id, content, column, title = None):
+    def __init__(self, user_id, content, column, title = None,  weight = 100000000):
         self.user_id = user_id
         self.content = content
         self.column = column
         if title != None:
             self.title = title
         self.created = datetime.utcnow()
+        self.weight = weight
 
 @app.route('/', methods=['POST', 'GET'])
 def index():
@@ -103,6 +104,25 @@ def login():
             return render_template('login_template.html')
     return render_template('login_template.html')
 
+@app.route('/completed/')
+def completed():
+    user = User.query.filter_by(id = session['userid']).first()
+    completedTodos = user.todos.filter_by(finished = True)
+    return render_template('completed_template.html', todos = completedTodos)
+
+@app.route('/edit/<int:todoid>/')
+def edit(todoid):
+    return "DO EDIT THINGS HERE"
+
+@app.route('/done/<int:todoid>/')
+def done(todoid):
+    user = User.query.filter_by(id = session['userid']).first()
+    todo = user.todos.filter_by(id = todoid).first()
+    todo.finished = True
+    todo.finishedTime = datetime.utcnow()
+    db.session.commit()
+    return redirect(url_for('index'))
+
 @app.route('/register/', methods=['POST', 'GET'])
 def register():
     if request.method == 'POST':
@@ -114,7 +134,7 @@ def register():
         db.session.commit()
         users = User.query.all()
         return redirect(url_for('login'))
-    return render_template('register_template.html')
+    return render_template('registaer_template.html')
 
 @app.route('/logout/')
 def logout():

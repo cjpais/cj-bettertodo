@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+  <meta name="description" content="Nothing better than a life with good TODO">
+  <meta name="author" content="Christopher Pais">
+  <link rel="icon" href="../../favicon.ico">
+  <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/bulma.css')}}">
+  <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/material.min.css')}}">
+  <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/bootstrap.min.css')}}">
+  <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/signin.css')}}">
+  <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/list.css')}}">
+  <title>BetterTodo</title>
+
+</head>
+
+<body>
+
+  <nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+        </button>
+        <a class="navbar-brand" href="#">CJ's Todo</a>
+      </div>
+      <div id="navbar" class="collapse navbar-collapse">
+        <ul class="nav navbar-nav">
+          <li><a href="{{url_for('index')}}">Home</a></li>
+          <li><a href="{{url_for('logout')}}">Logout</a></li>
+          <li class="active"><a href="{{url_for('completed')}}">Completed Tasks</a></li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div>
+</nav>
+<!-- Colored FAB button -->
+<div class="container">
+  <br>
+
+  <div class="columns">
+    <div class="column">
+      <h2 align="center">Completed Todos</h2>
+      <br>
+      <ul id="current" class="list-group">
+        {% for todo in todos %}
+
+        <div id="{{todo.id}}" class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">{{ todo.title }}
+              <a class="pull-right pad-right" href="{{url_for('edit', todoid = todo.id)}}"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+            </h3>
+          </h6>Date Completed: {{todo.finishedTime.date()}}</h6>
+          </div>
+          <div class="panel-body">{{todo.content.strip().rstrip()}}</div>
+        </div>
+
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+</div>
+</div><!-- /.container -->
+
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="{{url_for('static',filename='js/jquery.min.js')}}"></script>
+<script src="{{url_for('static',filename='js/material.min.js')}}"></script>
+<script src="{{url_for('static',filename='js/jquery-ui.js')}}"></script>
+</body>
+</html>

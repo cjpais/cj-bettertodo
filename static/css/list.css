@@ -30,3 +30,9 @@ ul.connectedSortable {
 div.panel-body {
   white-space: pre-line;
 }
+a.pad-left {
+  padding-left: 5px;
+}
+a.pad-right {
+  padding-right: 5px;
+}
